@@ -27,6 +27,29 @@ Mutable objects are not "refactoring-proof". Therefore, it is a good practice to
 
 ## Testing
 ### Unit Testing
+In sbt projects, tests go in the `src/test/scala` directory and is common practice to mirror the names of the source files.
+Several testing libraries, here we use MUnit
+
+Add the following to the build.sbt file
+```scala
+libraryDependencies =+ "org.scalameta" %% "munit" % "0.7.19" % Test
+testFrameworks += new TestFramework("munit.Framework")
+```
+A test suite is a class that extends munit.FunSuite
+```scala
+// File src/test/scala/testing/ProgramSuite.scala
+package testing
+
+class ProgramSuite extends munit.FunSuite:
+    test("add") {
+        // TODO write test spec here
+    }
+    
+        test("fibonacci") {
+        // TODO write test spec here
+    }
+end ProgramSuite
+```
 
 ### Property Based Testing
 
