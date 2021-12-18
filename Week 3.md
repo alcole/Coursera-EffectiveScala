@@ -157,6 +157,68 @@ Summary:
 * If the set of possible operations on values of some type is bounded, then it is probably a good idea to model this type with a class
 
 ### Opaque Types
+Encapsulating ID Types
+
+compiler will reject other ids with type long.
+```scala
+case class UserID private (value: Long)
+
+object UserID:
+    def parse(string: String): Option[UserID] =
+       string.toLongOption.map(id => UserID(id))
+```
+* This code defines a *public* type UserID, but its constructor is *private* (it can be accessed from within the UserID companion object)
+* The only way to construct a value of type UserID is to use the operation UserID.parse
+
+introduces a wrapper and an overhead with that
+
+one way to remove the runtime overhead is to use a **type alias**
+```scala
+type UserID = Long
+
+object UserID:
+    def parse(string: String): Option[UserID] =
+        string.toLongOption
+```
+Type aliases incur no runtime costs (there is no class added), and can be interchangeably used with the type they are an alias to.
+
+Type aliases can also provide a short name for a complex type expression.
+
+**Opaque Type** Aliases offer best of both
+* Like type aliases, opaque type aliases incur no runtime overhead
+* Inside the scope of the alias definition, the alias is transparent
+* Outside its scope, the alias is opaque: it hides the type it is an alias to
+```scala
+object UserID
+    opaque type UserID = Long
+    def parse(string: String): Option[UserID] = string.toLongOption
+    def value(userID: UserID): Long = userID
+end UserID
+```
+
 
 ### Extension Methods
+How to add new methods to an existing type. Since opaque types have no methods, you have to define auxiliary methods to work with opaque types. Use **extension methods** to access the values.
+```scala
+object UserID:
+    opaque type UserID = Long
+    extension (userID: UserID)
+        def value: Long = userID
+        
+ // usage...
+import UserID.UserID
+...
+userID.value
+```
+extension methods are no specific to opaque types.
 
+When you define an extension method like the following: `extension (n: Int) def ** (e: Int): Int = ...`. The compiler translates the extension methods to regular methods, similar to: `def ** (n: Int)(e: Int): Int =`.
+As a consequence, extension methods can also be called with the following syntax `**(2)(4) // : Int = 16`.
+
+Compiler will try and rewrite e.m to m(e).
+
+Since the compiler looks for extension only when the method that is called is missing, extensions can only add new members, not override existing ones.
+
+Extensions cannot refer to other class members via `this`.
+
+Compiler looks for extension methods in its scope of definition (and some extra rules later in course).
