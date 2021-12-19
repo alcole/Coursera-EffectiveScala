@@ -1,4 +1,4 @@
-# Week2
+# Week 2
 
 ## Lists
 Part of Scala standard library
@@ -289,3 +289,5 @@ Query
 * forall
 * exists to check at least one element matches a predicate
 
+---
+Go to [week 3](Week3.md)
