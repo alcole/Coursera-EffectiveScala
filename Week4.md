@@ -89,7 +89,37 @@ Can be hard if the operations are too numerous or complicated.
 You can use mocking libraries such as ScalaMock - Out of scope for this course.
 
 ### Integration Testing
+Integration testing is the practice of testing a complete system, with no stubs or mocks.
+MUnit allows you to set up and shut down a resource for the lifetime of a single test.
+Http server:
+```scala
+class HttpServerSuite extends munit.FunSuite:
+    val withHttpServer = FunFixture[HttpServer](
+    setup = test => {
+        val httpServer = HttpServer()
+        httpServer.start(8888)
+        httpServer
+    },
+    teardown = httpServer => httpServer.stop()
+)
+// call
+
+withHttpServer.test("server is running") { httpServer => 
+    // perform http request here
+    }
+```
+or run all tests and then shutdown
+```scala
+class HttpServerSuite extends munit.FunSuite:
+
+    val httpServer = HttpServer()
+    override def beforeAll(): Unit = httpServer.start(8888)
+    override def afterAll(): Unit = httpServer.stop()
+```
 
 ### Testing the Tests
+Test coverage tells you the paths that are untested, can use a compiler plugin scoverage.
+* Tests are code too
+* They need to be maintained
+* They may have bugs
 
-### Debugging Programs
