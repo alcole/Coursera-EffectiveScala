@@ -11,3 +11,6 @@ https://www.coursera.org/learn/effective-scala
 * [week 5 Notes](Week5.md)
 * [week 6 Notes](Week6.md)
 
+
+See also the [Cheat Sheet](https://github.com/lampepfl/progfun-wiki/blob/gh-pages/CheatSheet.md) from the other Coursera Scala course.
+
