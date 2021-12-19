@@ -50,10 +50,43 @@ class ProgramSuite extends munit.FunSuite:
     }
 end ProgramSuite
 ```
+Think about corner cases to check
 
 ### Property Based Testing
+Different approach with random inputs, we need to specify general properties that must be correct.
+
+ScalaCheck library for property-based testing, integrates with munit so add the following
+```scala
+libraryDependencies =+ "org.scalameta" %% "munit-scalacheck" % "0.7.19" % Test
+// same as for unit testing
+testFrameworks += new TestFramework("munit.Framework")
+```
+A test suite containing properties is a class that extends munit.ScalaCheckSuite:
+```scala
+// File src/test/scala/testing/ProgramProperties.scala
+package testing
+
+import org.scalacheck.Prop.forAll
+
+class ProgramProperties extends munit.ScalaCheckSuite:
+    property("fibonacci(n) == fibonacci(n-1) + fibonacci(n-2) "){
+        forAll { (n: Int) =>
+            fibonacci(n) == fibonacci(n-1) + fibonacci(n-2)
+        }
+    }
+```
+forAll takes a function as a parameter and returns a Boolean value.
+
+Good properties may be hard to find or formulate. You should look for **invariants** and **identities** (such as invertibility, idempotence, transformation relations etc).
+
+See more: "Much ado about testing" talk by Nicolas Rinaudo, 2019
 
 ### Mocking
+How do we test just one component when it depends on other components. Provide a fake implementation of a component to use.
+
+Can be hard if the operations are too numerous or complicated.
+
+You can use mocking libraries such as ScalaMock - Out of scope for this course.
 
 ### Integration Testing
 

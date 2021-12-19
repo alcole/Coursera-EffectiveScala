@@ -4,5 +4,10 @@ Notes from Coursera's Effective Scala
 https://www.coursera.org/learn/effective-scala
 
 
-[link to week 1 Notes](Week1.md)
+* [week 1 Notes](Week1.md)
+* [week 2 Notes](Week2.md)
+* [week 3 Notes](Week3.md)
+* [week 4 Notes](Week4.md)
+* [week 5 Notes](Week5.md)
+* [week 6 Notes](Week6.md)
 
