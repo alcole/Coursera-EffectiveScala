@@ -123,3 +123,5 @@ Test coverage tells you the paths that are untested, can use a compiler plugin s
 * They need to be maintained
 * They may have bugs
 
+---
+Go to [week 5](Week5.md)

@@ -222,3 +222,6 @@ Since the compiler looks for extension only when the method that is called is mi
 Extensions cannot refer to other class members via `this`.
 
 Compiler looks for extension methods in its scope of definition (and some extra rules later in course).
+
+---
+Go to [week 4](Week4.md)

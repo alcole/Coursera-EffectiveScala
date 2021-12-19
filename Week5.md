@@ -42,3 +42,7 @@ Parameter A has one **context bound**
 ### Type Classes and Extension Methods
 
 ### Implicit Conversions
+
+
+---
+Go to [week 6](Week6.md)
