@@ -113,3 +113,7 @@ Enum definition is syntatic sugar for a sealed trait.
 Note the same name can refer to either a type of a value depending on where it is used.
 * object when used on RHS of a definition or when passed as argument to an operation
 * type when used on RHS of a type annotation
+
+---
+
+Go to [week 2](Week2.md)
