@@ -249,8 +249,15 @@ end factorial
 ```
 
 ### for syntax
+Concise syntax to manipulate collections.
 
+A for-expression is of the form `for ( s ) yield e`
 
+Where s is a sequence of *generators* and *filters*, and e is an expression whose value is returned by an iteration
+* A generator is of the form p <- e, where p is pattern and e an expression whose value is a collection
+* A filter is of the form if f where f is a boolean expression
+* The sequence must start with a generator
+* If there are several generators in the sequence, the last generators vary faster than the first.
 
 ## Collections Extra
 
