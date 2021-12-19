@@ -254,14 +254,20 @@ Concise syntax to manipulate collections.
 A for-expression is of the form `for ( s ) yield e`
 
 Where s is a sequence of *generators* and *filters*, and e is an expression whose value is returned by an iteration
-* A generator is of the form p <- e, where p is pattern and e an expression whose value is a collection
-* A filter is of the form if f where f is a boolean expression
+* A *generator* is of the form p <- e, where p is pattern and e an expression whose value is a collection
+* A *filter* is of the form if f where f is a boolean expression
 * The sequence must start with a generator
 * If there are several generators in the sequence, the last generators vary faster than the first.
 
+1. A simple for-expression `for x <- e1 yield e2` is translated to `e1.map(x => e2)`
+2. A for-expression `for (x <- e1 if f; s) yield e2` where f is a filter and s is a potentially empty sequence of generators and filters, is translated to `for (x <- e1.withFilter(x => f); s) yield e2`
+3. A for-expression `for (x <- e1; y <- e2; s) yield e23` where s is a potentially empty sequence of generators and filters, is translated to `e1.flatMap(x => for (y <- e2; s) yield e3)`
+
+Imperative Loops - also have a special syntax `for x <- e1 do s` is translated to `e1.foreach(x => s`
+
 ## Collections Extra
 
-* Concatenating with ++, and can be called with dot notation .++ will not mutate mutable and immutable
+* Concatenating with `++`, and can be called with dot notation .++ will not mutate mutable and immutable
 * ++= mutable concatenation for mutable collection types
 * prepend and append for mutable with += and +=:
 * mutably remove elements -= removes first element equal to parameter
