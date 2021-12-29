@@ -34,12 +34,69 @@ def sort[A: Ordering](xs: List[A]): List[A]
 Parameter A has one **context bound**
 
 ### Given Definitions
+For the previous example to work, `Ordering.Int` must be a given definition:
+```scala
+object Ordering:
+    given Int: Ordering[Int] with
+        def compare(x: Int, y: Int): Int =
+            if x < y then -1 else if x > y then 1 else 0
+```
+This code defines a given instance of type Ordering[Int], named Int. The instance is initialised the first time it is used.
+
+We can also define a given instance that is equal to some expression, using an alias
+
+```scala
+object IntOrdering extends Ordering[Int]:
+    def compare(x: Int, y: Int): Int =
+        if x < y then -1 else if x > y then 1 else 0
+
+given intOrdering: Ordering[Int] = IntOrdering
+```
+RHS of alias only evaluated once and reused.
+
+Can be anonymous, just omit the name
+```scala
+given Ordering[Double] with
+    def compare(x: Double, y: Double): Int =
+        if x < y then -1 else if x > y then 1 else 0
+```
+The compiler will synthesize a name for an anonymous definition
+
+Summoning an instance - works for named and anonymous, refer to an instance by its type. Summon is a predefined method `def summon[T](using arg: T): T = arg`
+
+Visibility of Given Instances
+
+Importing Given Instances
+```scala
+import scala.math.Ordering.Int // by name
+
+import scala.math.Ordering.{given Ordering[Int]} // by type
+import scala.math.Ordering.{given Ordering[?]} // by type
+
+import scala.math.Ordering.given // within a given selector (imports all given instances of a path)
+```
+since names don't matter the by type is preferred
+
 
 ### Type Classes
+Type classes support *retroactive* extension: the ability to extend a data type with new operations without changing the original definition of the data type.
+
+Type classes provide another form of polymorphism: the behaviour of sort varies according to the type of elements in the list.
+At compiliation time, the compiler resolves the specific Ordering implementation that matches the type of the list elements.
+
+Type classes classify types by the operations they support.
+
+In Scala, this mechanism is often preferred over subtyping to achieve polymorphism.
+
+One reason for this is that type classes support retroactive extension.
+
+### Conditional Given Definitions
 
 ## Extension Methods and Implicit Conversions
 
 ### Type Classes and Extension Methods
+
+
 
 ### Implicit Conversions
 
