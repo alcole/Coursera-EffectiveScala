@@ -75,8 +75,30 @@ import scala.math.Ordering.{given Ordering[?]} // by type
 
 import scala.math.Ordering.given // within a given selector (imports all given instances of a path)
 ```
-since names don't matter the by type is preferred
+since names don't matter the by type is preferred.
 
+##### Search Scope for Given Instances
+for a given instance of type T includes:
+* first, all th given instances that are visible (inherited, imported, or defined in any enclosing scope)
+* then, the given instances found in any companion object *associated* with T
+
+The definition of *associated* is quite general. Beside the companion object of the type T itself, the compiler will also consider:
+* companion objects associated with any of T's inherited types
+* companion objects associated with any type argument in T
+* if T is an inner class, the outer objects in which it is embedded
+
+If no given instances then compilation error `error: no implicit argument of type Int was found for parameter x of method ...`
+
+if more than one given instance is eligible, an **ambiguity** is reported `error: ambiguous implicit arguments: both...`
+
+### Priorities Between Given Definitions
+If one instance is **more specific** than another then the ambiguity is not generated.
+
+A definition `given a: A` is more specific than a defintion `given b: B` if:
+* a is in a closer lexical scope than b
+* a is defined in a class or object which is a subclass of the class defining b
+* type A is a subtype of type B
+* type A has more "fixed" parts than B
 
 ### Type Classes
 Type classes support *retroactive* extension: the ability to extend a data type with new operations without changing the original definition of the data type.
@@ -91,6 +113,8 @@ In Scala, this mechanism is often preferred over subtyping to achieve polymorphi
 One reason for this is that type classes support retroactive extension.
 
 ### Conditional Given Definitions
+
+
 
 ## Extension Methods and Implicit Conversions
 
