@@ -113,16 +113,89 @@ In Scala, this mechanism is often preferred over subtyping to achieve polymorphi
 One reason for this is that type classes support retroactive extension.
 
 ### Conditional Given Definitions
-
-
+Can also take context parameters. Take a type and a context parameter
+`given orderingList[A](using ord: Ordering[A]): Ordering[List[A]] with ...`
+ this is a *conditional* definition, an ordering of lists with elements of type A exists only if there is an ordering for A.
+ 
+ This sort of conditional behaviour is best implemented with type classes. Subtyping and inheritance cannot express this: a class either inherits a trait or doesn't.
+ 
+ For reference here is the implementation
+ ```scala
+ given orderingList[A](using ord: Ordering[A]): Ordering[List[A]] with 
+    def compare(xs0: List[A], ys0: List[A]) =
+        (xs, ys) match
+            case (Nil, Nil) => 0
+            case (Nil, _)   => -1
+            case (_, Nil)   => 1
+            case (x :: xs, y :: ys1) =>
+                val c = ord.compare(x, y)
+                if c != 0 then c else compare(xs1, ys1)
+ ```
+ 
+ * given definitions can also take type parameters and context parameters
+ * an arbitrary number of given definitions can be chained until a terminal definition is reached
+ * this allows the compiler to summon complex pieces of logic based on type information, eg:
+ `summon[Ordering[(Int, List[String])]]`
 
 ## Extension Methods and Implicit Conversions
-
 ### Type Classes and Extension Methods
+Recap:
+* Type classes can be used to retroactively add operations to existing data types - but they can'be be called like methods on the instances
+* Extension methods make it possible to add methods to a type, outside the type definition
+* we define the extension method in the trait to add an operation to a type
+```scala
+trait Ordering[A]:
+    def compare(x: A, y: A): Int
+    extension (lhs: A)
+        def < (rhs: A): Boolean = compare(lhs, rhs) < 0
+        
+// and then:
+...
+... if x < y then ...
+...
+```
+Applicability of Extension Methods
 
+Extension methods on an expression of type T are applicable if
+1. they are visible (by being defined, inherited or imported) in a scope enclosing the point of the application, or
+2. they are defined in an object associated with the type T, or
+3. they are defined in a given instance associated with the type T
 
+Summary: 
+Leverage extension methods to provide a nice syntax to work with your type classes.
+
+Extension methods are applicable on values of type T if there is a given instance
+* that is visible at the point of application
+* or that is defined in a companion object associated with T
 
 ### Implicit Conversions
+make it possible to convert an expression to a different type.
+
+Aside: Repeated Parameters
+```scala
+def printSquares(xs: Int*) = println(xs.map(x => x * x))
+printSquares(1, 2, 3)
+```
+* xs is a **repeated** parameter
+* at call site, we can supply several arguments
+* in the method body, xs has type `Seq[Int]`
+* repeated parameters can only appear at the end of a parameter list
+
+The compiler looks for implicit conversions on an expression e of Type T if T does not conform to the expression's expected type S.
+
+In such a case, the compiler looks in the the context for a given instance of type Conversion[T, S]
+
+Note: at most one implicit conversion can be applied to a given expression
+
+Warning:
+Implicit conversions are silently applied by the compiler, and they change the type of expressions.
+
+Therefore, they can confuse developers reading code (hence the import).
+
+Before defining an implicit conversion, make sure to weigh the pros and cons. Reducing boilerplate is a good purpose, but this should be balanced with the possible drawbacks of not seeing pieces of code that are yet part of the program.
+
+Summary:
+* Implicit conversions can improve the ergonomics of an API but should be used *sparingly*
 
 
 ---
